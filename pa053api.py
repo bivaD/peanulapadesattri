@@ -1,4 +1,6 @@
-from fastapi import FastAPI, HTTPException, Query
+import json
+from fastapi import FastAPI, HTTPException, Query, Response
+from fastapi.responses import JSONResponse
 import requests
 
 app = FastAPI()
@@ -34,16 +36,16 @@ def get_airport_temperature(airport_code):
 
 # Function to get stock price of a given stock
 def get_stock_price(stock_code):
-    url = f"https://apidojo-yahoo-finance-v1.p.rapidapi.com/auto-complete?region=US&q={stock_code}"
+    url = f"https://apidojo-yahoo-finance-v1.p.rapidapi.com/market/v2/get-quotes?region=US&symbols={stock_code}"
     headers = {
         'x-rapidapi-key': 'b2067eca84msh3325e30035425a3p12a11ajsn4863bb6d0d0d',
         'x-rapidapi-host': 'apidojo-yahoo-finance-v1.p.rapidapi.com'
     }
     response = requests.get(url, headers=headers)
-    data = response.json()
-    price = data.get('quoteResponse', {}).get('result', [])[0].get('regularMarketPrice', None)
+    price = response.json()['quoteResponse']['result'][0]['regularMarketPrice']
     if price is None:
         raise HTTPException(status_code=404, detail="Stock price data not found for the given stock code")
+    
     return price
 
 # Function to evaluate arithmetic expression
