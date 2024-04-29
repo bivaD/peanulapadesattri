@@ -1,5 +1,4 @@
-import json
-from fastapi import FastAPI, HTTPException, Query, Response
+from fastapi import FastAPI, HTTPException, Query
 from fastapi.responses import JSONResponse
 import requests
 
@@ -32,7 +31,7 @@ def get_airport_temperature(airport_code):
     if temperature is None:
         raise HTTPException(status_code=404, detail="Temperature data not found for the given coordinates")
     
-    return temperature
+    return JSONResponse(content=temperature, status_code=200, media_type="application/json")
 
 # Function to get stock price of a given stock
 def get_stock_price(stock_code):
@@ -46,13 +45,14 @@ def get_stock_price(stock_code):
     if price is None:
         raise HTTPException(status_code=404, detail="Stock price data not found for the given stock code")
     
-    return price
+    return JSONResponse(content=price, status_code=200, media_type="application/json")
+
 
 # Function to evaluate arithmetic expression
 def evaluate_expression(expression):
     try:
         result = eval(expression)
-        return result
+        return JSONResponse(content=result, status_code=200, media_type="application/json")
     except Exception as e:
         raise HTTPException(status_code=400, detail="Invalid arithmetic expression")
 
